@@ -23,3 +23,15 @@ variable "user_data" {
 variable "tags" {
     type = map
 }
+
+variable "key_name"{
+    type = string
+}
+
+variable "private_key_path"{
+    type = string
+}
+
+variable "inline" {
+    type = list(string)  
+}
