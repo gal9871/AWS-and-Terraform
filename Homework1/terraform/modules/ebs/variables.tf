@@ -1,5 +1,5 @@
 variable "size" {
-  type = integer
+  type = number
 }
 
 variable "volume_id" {
