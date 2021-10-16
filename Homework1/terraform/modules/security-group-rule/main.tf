@@ -5,4 +5,5 @@ resource "aws_security_group_rule" "sg-rule" {
   protocol          = var.protocol
   cidr_blocks       = var.cidr_blocks
   security_group_id = var.security_group_id
+  
 }
