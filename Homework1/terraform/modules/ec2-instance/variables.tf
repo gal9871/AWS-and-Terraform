@@ -1,4 +1,4 @@
-variable "ami_id"{
+variable "ami"{
     type = string
 }
 
@@ -7,12 +7,8 @@ variable "instance_type"{
     default = "t3.micro"
 }
 
-variable "subnet_id"{
-    type = string
-}
-
 variable "vpc_security_group_ids" {
-    type = string
+    type = list(string)
 }
 
 variable "user_data" {
@@ -24,14 +20,15 @@ variable "tags" {
     type = map
 }
 
+variable "ec2_count" {
+    type = number
+    default = 1
+}
 variable "key_name"{
     type = string
 }
 
-variable "private_key_path"{
-    type = string
-}
-
-variable "inline" {
-    type = list(string)  
+variable "availability_zone" {
+  type = string
+  default = "us-east-1a"
 }
