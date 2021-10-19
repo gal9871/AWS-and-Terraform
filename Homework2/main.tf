@@ -49,3 +49,40 @@ module "private_subnet_2" {
     Environment   = "prod",
     Purpuse = "private subnet for web app"}
 }
+
+module "igw" {
+  source = "..\\modules\\internet-gateway"
+  vpc_id     = module.main_vpc.aws_vpc_id
+  tags = { Name    = "igw",
+    Environment   = "prod"}
+}
+
+module "nat_gateway-1" {
+  source = "..\\modules\\nat-gateway"
+  allocation_id = var.allocation_id
+  subnet_id     = module.public_subnet_1.aws_subnet_id
+
+  tags = {
+    Name = "gw NAT",
+    Environment = "prod"
+  }
+
+  # To ensure proper ordering, it is recommended to add an explicit dependency
+  # on the Internet Gateway for the VPC.
+  depends_on = [module.igw.igw-id]
+}
+
+module "nat_gateway-2" {
+  source = "..\\modules\\nat-gateway"
+  allocation_id = var.allocation_id
+  subnet_id     = module.public_subnet_2.aws_subnet_id
+
+  tags = {
+    Name = "gw NAT",
+    Environment = "prod"
+  }
+
+  # To ensure proper ordering, it is recommended to add an explicit dependency
+  # on the Internet Gateway for the VPC.
+  depends_on = [ module.igw.igw-id]
+}
