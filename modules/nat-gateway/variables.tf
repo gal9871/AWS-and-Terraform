@@ -7,5 +7,5 @@ variable "allocation_id" {
 }
 
 variable "tags" {
-  type = map
+  type = map(any)
 }

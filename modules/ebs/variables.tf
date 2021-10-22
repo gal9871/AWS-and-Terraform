@@ -9,20 +9,20 @@ variable "instance_id" {
 }
 
 variable "availability_zone" {
-  type = string
+  type    = string
   default = "us-east-1a"
 }
 
-variable "ebs_count"{
-  type = number
+variable "ebs_count" {
+  type    = number
   default = 1
 }
 
-variable "encrypted"{
+variable "encrypted" {
   type = bool
 }
 
 variable "type" {
-  type = string
+  type    = string
   default = "gp2"
 }

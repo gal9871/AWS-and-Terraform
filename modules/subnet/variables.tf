@@ -3,7 +3,7 @@ variable "cidr_block" {
 }
 
 variable "tags" {
-  type = map
+  type = map(any)
 }
 
 variable "vpc_id" {
