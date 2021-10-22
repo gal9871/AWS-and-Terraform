@@ -292,27 +292,48 @@ EOT
 
 }
 
+module "lb" {
+  source = "..\\modules\\lb"
+  name               = "web-lb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [module.nginx-sg.aws_security_group_id]
+  subnets            = [module.public_subnet_1.aws_subnet_id, module.public_subnet_2.aws_subnet_id]
 
+  tags = {
+    Name = "nginx-lb"
+    Environment = "production"
+    type = "Application"
+  }
+}
 
+module "nginx-tg" {
+  source = "..\\modules\\target-groups"
+  name     = "nginx-tg"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = module.main_vpc.aws_vpc_id
+}
 
+module "listener-lb" {
+  source = "..\\modules\\lb-listeners"
+  load_balancer_arn = module.lb.lb-arn
+  port              = "80"
+  protocol          = "HTTP"
+  target_group_arn = module.nginx-tg.tg-arn
+}
 
+module "lb-tg-attachment-nginx-1" {
+  source = "..\\modules\\lb-tg-attachment"
+  target_group_arn = module.nginx-tg.tg-arn
+  target_id        = join("\",\"", module.nginx-instance-1[0].ec2_instance_id)
+  port             = 80
+}
 
+module "lb-tg-attachment-nginx-2" {
+  source = "..\\modules\\lb-tg-attachment"
+  target_group_arn = module.nginx-tg.tg-arn
+  target_id        = join("\",\"", module.nginx-instance-2[0].ec2_instance_id)
+  port             = 80
+}
 
-
-
-
-
-# module "nat_gateway-2" {
-#   source = "..\\modules\\nat-gateway"
-#   allocation_id = var.allocation_id
-#   subnet_id     = module.public_subnet_2.aws_subnet_id
-
-#   tags = {
-#     Name = "gw NAT",
-#     Environment = "prod"
-#   }
-
-#   # To ensure proper ordering, it is recommended to add an explicit dependency
-#   # on the Internet Gateway for the VPC.
-#   depends_on = [ module.igw.igw-id]
-# }
