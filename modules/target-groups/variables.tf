@@ -16,6 +16,6 @@ variable "protocol" {
 
 
 variable "target_type" {
-  type = string
+  type    = string
   default = "instance"
 }

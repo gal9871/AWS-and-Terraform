@@ -294,7 +294,7 @@ EOT
 }
 
 module "lb" {
-  source = "..\\modules\\lb"
+  source             = "..\\modules\\lb"
   name               = "web-lb"
   internal           = false
   load_balancer_type = "application"
@@ -302,9 +302,9 @@ module "lb" {
   subnets            = [module.public_subnet_1.aws_subnet_id, module.public_subnet_2.aws_subnet_id]
 
   tags = {
-    Name = "nginx-lb"
+    Name        = "nginx-lb"
     Environment = "production"
-    type = "Application"
+    type        = "Application"
   }
 }
 
@@ -316,7 +316,7 @@ resource "aws_lb_cookie_stickiness_policy" "foo" {
 }
 
 module "nginx-tg" {
-  source = "..\\modules\\target-groups"
+  source   = "..\\modules\\target-groups"
   name     = "nginx-tg"
   port     = 80
   protocol = "HTTP"
@@ -324,22 +324,22 @@ module "nginx-tg" {
 }
 
 module "listener-lb" {
-  source = "..\\modules\\lb-listeners"
+  source            = "..\\modules\\lb-listeners"
   load_balancer_arn = module.lb.lb-arn
   port              = "80"
   protocol          = "HTTP"
-  target_group_arn = module.nginx-tg.tg-arn
+  target_group_arn  = module.nginx-tg.tg-arn
 }
 
 module "lb-tg-attachment-nginx-1" {
-  source = "..\\modules\\lb-tg-attachment"
+  source           = "..\\modules\\lb-tg-attachment"
   target_group_arn = module.nginx-tg.tg-arn
   target_id        = join("\",\"", module.nginx-instance-1[0].ec2_instance_id)
   port             = 80
 }
 
 module "lb-tg-attachment-nginx-2" {
-  source = "..\\modules\\lb-tg-attachment"
+  source           = "..\\modules\\lb-tg-attachment"
   target_group_arn = module.nginx-tg.tg-arn
   target_id        = join("\",\"", module.nginx-instance-2[0].ec2_instance_id)
   port             = 80
@@ -382,4 +382,24 @@ module "db-server-2" {
   key_name  = "galsekey"
   user_data = ""
 
+}
+
+module "nginx_role" {
+  source = "..\\modules\\iam-role"
+  name   = "nginx-role-s3"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+  managed_policy_arns = var.managed_policy_arns
+  tags                = var.tags
 }
