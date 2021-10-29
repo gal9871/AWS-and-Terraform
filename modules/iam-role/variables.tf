@@ -1,14 +1,14 @@
-variable "tags"{
-    type = map
+variable "tags" {
+  type = map(any)
 }
 
-variable "assume_role_policy"{
+variable "assume_role_policy" {
 }
 
-variable "name"{
-    type = string
+variable "name" {
+  type = string
 }
 
-variable "managed_policy_arns"{
-    type = list(string)
+variable "managed_policy_arns" {
+  type = list(string)
 }
