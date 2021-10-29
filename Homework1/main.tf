@@ -56,7 +56,7 @@ module "sg-rule-out" {
 
 module "nginx-instance-1" {
   source                 = "..\\modules\\ec2-instance"
-  count = 2
+  count                  = 2
   ami                    = data.aws_ami.aws-linux.id
   instance_type          = "t2.micro"
   vpc_security_group_ids = [module.nginx-sg.aws_security_group_id]
@@ -64,7 +64,7 @@ module "nginx-instance-1" {
     Owner     = "Gal Segal"
     Terraform = "true"
     Purpose   = "nginx server"
-    Name = "nginx-${count.index}"
+    Name      = "nginx-${count.index}"
   }
   key_name  = "galsekey"
   user_data = <<EOT
@@ -115,10 +115,10 @@ EOT
 
 }
 
-module "ebs"{
-    source                 = "..\\modules\\ebs"
-    size = 10
-    count = 2
-    encrypted = true
-    instance_id = "${join("\",\"", module.nginx-instance-1[count.index].ec2_instance_id)}"
+module "ebs" {
+  source      = "..\\modules\\ebs"
+  size        = 10
+  count       = 2
+  encrypted   = true
+  instance_id = join("\",\"", module.nginx-instance-1[count.index].ec2_instance_id)
 }

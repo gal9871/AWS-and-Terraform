@@ -3,10 +3,10 @@ variable "cidr_block" {
 }
 
 variable "tags" {
-  type = map
+  type = map(any)
 }
 
 variable "instance_tenancy" {
-  type = string
+  type    = string
   default = "default"
 }
