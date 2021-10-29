@@ -337,3 +337,129 @@ module "lb-tg-attachment-nginx-2" {
   port             = 80
 }
 
+
+module "db-server-1" {
+  source                 = "..\\modules\\ec2-instance"
+  count                  = 1
+  subnet_id              = module.private_subnet_1.aws_subnet_id
+  ami                    = data.aws_ami.aws-linux.id
+  instance_type          = "t2.micro"
+  availability_zone      = "us-east-1a"
+  vpc_security_group_ids = [module.nginx-sg.aws_security_group_id]
+  tags = {
+    Owner     = "Gal Segal"
+    Terraform = "true"
+    Purpose   = "db server"
+    Name      = "DB"
+  }
+  key_name  = "galsekey"
+  user_data = <<EOT
+#cloud-config
+# update apt on boot
+package_update: true
+# install nginx
+packages:
+- nginx
+write_files:
+- content: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Assignment 1</title>
+      <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+      <style>
+        html, body {
+          background: #000;
+          height: 100%;
+          width: 100%;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-flow: column;
+        }
+        img { width: 250px; }
+        svg { padding: 0 40px; }
+        p {
+          color: #fff;
+          font-family: 'Courier New', Courier, monospace;
+          text-align: center;
+          padding: 10px 30px;
+        }
+      </style>
+    </head>
+    <body>
+      <p>Welcome to Grandpa's Whiskey </p>
+    </body>
+    </html>
+  path: /usr/share/app/index.html
+  permissions: '0644'
+runcmd:
+- cp /usr/share/app/index.html /var/www/html/index.html
+EOT
+
+}
+
+module "db-server-2" {
+  source                 = "..\\modules\\ec2-instance"
+  count                  = 1
+  subnet_id              = module.private_subnet_2.aws_subnet_id
+  ami                    = data.aws_ami.aws-linux.id
+  instance_type          = "t2.micro"
+  availability_zone      = "us-east-1b"
+  vpc_security_group_ids = [module.nginx-sg.aws_security_group_id]
+  tags = {
+    Owner     = "Gal Segal"
+    Terraform = "true"
+    Purpose   = "DB server"
+    Name      = "DB"
+  }
+  key_name  = "galsekey"
+  user_data = <<EOT
+#cloud-config
+# update apt on boot
+package_update: true
+# install nginx
+packages:
+- nginx
+write_files:
+- content: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Assignment 1</title>
+      <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+      <style>
+        html, body {
+          background: #000;
+          height: 100%;
+          width: 100%;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-flow: column;
+        }
+        img { width: 250px; }
+        svg { padding: 0 40px; }
+        p {
+          color: #fff;
+          font-family: 'Courier New', Courier, monospace;
+          text-align: center;
+          padding: 10px 30px;
+        }
+      </style>
+    </head>
+    <body>
+      <p>Welcome to Grandpa's Whiskey </p>
+    </body>
+    </html>
+  path: /usr/share/app/index.html
+  permissions: '0644'
+runcmd:
+- cp /usr/share/app/index.html /var/www/html/index.html
+EOT
+
+}
