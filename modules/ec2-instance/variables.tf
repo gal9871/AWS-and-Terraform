@@ -36,3 +36,8 @@ variable "availability_zone" {
   type    = string
   default = "us-east-1a"
 }
+
+variable "iam_instance_profile" {
+  type = string
+  default = ""
+}

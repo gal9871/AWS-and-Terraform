@@ -173,6 +173,7 @@ module "nginx-instance-1" {
   ami                    = data.aws_ami.aws-linux.id
   availability_zone      = "us-east-1a"
   instance_type          = "t2.micro"
+  iam_instance_profile   = module.nginx_instance_profile.profile-arn
   vpc_security_group_ids = [module.nginx-sg.aws_security_group_id]
   tags = {
     Owner     = "Gal Segal"
@@ -188,6 +189,8 @@ package_update: true
 # install nginx
 packages:
 - nginx
+- awscli
+- s3cmd
 write_files:
 - content: |
     <!DOCTYPE html>
@@ -219,13 +222,18 @@ write_files:
     </head>
     <body>
       <p>Welcome to Grandpa's Whiskey </p>
-      <p>
+      <p> instanceIP </p>
     </body>
     </html>
   path: /usr/share/app/index.html
   permissions: '0644'
 runcmd:
-- cp /usr/share/app/index.html /var/www/html/index.html
+- export instanceIP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
+- sed  "s|instanceIP|$instanceIP|" /usr/share/app/index.html > ./index.html
+- cp index.html /var/www/html/index.html
+- echo "aws s3 sync /var/log/nginx s3://galse-accesslogs/nginx1" > /home/s3sync.sh
+- chmod +x /home/s3sync.sh
+- (crontab -l 2>/dev/null; echo "0 * * * * /home/s3sync.sh") | crontab -
 EOT
 
 }
@@ -237,6 +245,7 @@ module "nginx-instance-2" {
   ami                    = data.aws_ami.aws-linux.id
   instance_type          = "t2.micro"
   availability_zone      = "us-east-1b"
+  iam_instance_profile   = module.nginx_instance_profile.profile-arn
   vpc_security_group_ids = [module.nginx-sg.aws_security_group_id]
   tags = {
     Owner     = "Gal Segal"
@@ -252,6 +261,8 @@ package_update: true
 # install nginx
 packages:
 - nginx
+- awscli
+- s3cmd
 write_files:
 - content: |
     <!DOCTYPE html>
@@ -288,7 +299,12 @@ write_files:
   path: /usr/share/app/index.html
   permissions: '0644'
 runcmd:
-- cp /usr/share/app/index.html /var/www/html/index.html
+- export instanceIP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
+- sed  "s|instanceIP|$instanceIP|" /usr/share/app/index.html > ./index.html
+- cp index.html /var/www/html/index.html
+- echo "aws s3 sync /var/log/nginx s3://galse-accesslogs/nginx2" > /home/s3sync.sh
+- chmod +x /home/s3sync.sh
+- (crontab -l 2>/dev/null; echo "0 * * * * /home/s3sync.sh") | crontab -
 EOT
 
 }
@@ -306,13 +322,6 @@ module "lb" {
     Environment = "production"
     type        = "Application"
   }
-}
-
-resource "aws_lb_cookie_stickiness_policy" "foo" {
-  name                     = "foo-policy"
-  load_balancer            = module.lb.lb-id
-  lb_port                  = 80
-  cookie_expiration_period = 60
 }
 
 module "nginx-tg" {
@@ -400,6 +409,31 @@ module "nginx_role" {
       },
     ]
   })
-  managed_policy_arns = var.managed_policy_arns
-  tags                = var.tags
+  managed_policy_arns = [module.S3-put-access.policy-arn]
+  tags                = {
+    Purpose = "role for nginx instance to access S3"
+  }
+}
+
+module "S3-put-access" {
+  source = "..\\modules\\iam-policy"
+  name        = "s3-policy"
+  description = "S3 put access policy"
+  policy      = jsonencode({
+  "Version":"2012-10-17"
+  "Statement":[
+    {
+      "Sid":"S3"
+      "Effect":"Allow"
+      "Action":["s3:*"]
+      "Resource":"*"
+    },
+  ]
+})
+}
+
+module "nginx_instance_profile" {
+  source = "..\\modules\\iam-instance-profile"
+  name = "nginx-profile"
+  role = module.nginx_role.role-name
 }

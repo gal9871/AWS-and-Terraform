@@ -8,4 +8,5 @@ resource "aws_instance" "ec2_instance" {
   count                  = var.ec2_count
   availability_zone      = var.availability_zone
   subnet_id              = var.subnet_id
+  iam_instance_profile   = var.iam_instance_profile
 }
