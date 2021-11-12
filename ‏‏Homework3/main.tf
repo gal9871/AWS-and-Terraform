@@ -437,3 +437,9 @@ module "nginx_instance_profile" {
   name = "nginx-profile"
   role = module.nginx_role.role-name
 }
+
+module "ansible_sg"{
+  source = "github.com/gal9871/configuration-management.git//materials/terraform?ref=7efaae40fc1dfcf3c9de7e892a3d4bc11e46c3be"
+  vpc_id        = module.main_vpc.aws_vpc_id
+  subnet_id     = module.public_subnet_1.aws_subnet_id
+}
