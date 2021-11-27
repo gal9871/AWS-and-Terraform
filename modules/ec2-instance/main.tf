@@ -9,4 +9,8 @@ resource "aws_instance" "ec2_instance" {
   availability_zone      = var.availability_zone
   subnet_id              = var.subnet_id
   iam_instance_profile   = var.iam_instance_profile
+    provisioner "file" {
+    source      = "ansible.pem"
+    destination = "/home/ec2-user/ansible.pem"
+  }
 }

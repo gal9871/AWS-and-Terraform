@@ -10,3 +10,8 @@ variable "instance_tenancy" {
   type    = string
   default = "default"
 }
+
+variable "enable_dns_hostnames"{
+  type = bool
+  default = true
+}
