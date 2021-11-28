@@ -335,7 +335,7 @@ module "nginx_instance_profile" {
 }
 
 module "ansible_sg"{
-  source = "github.com/gal9871/configuration-management.git//materials/terraform?ref=7efaae40fc1dfcf3c9de7e892a3d4bc11e46c3be"
+  source = "github.com/gal9871/configuration-management.git//materials/terraform?ref=5e6923c998e687163c44937eaf7de254698d6a7b"
   vpc_id        = module.main_vpc.aws_vpc_id
   subnet_id     = module.public_subnet_1.aws_subnet_id
 }
