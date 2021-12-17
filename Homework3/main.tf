@@ -200,8 +200,8 @@ module "nginx-instance-2" {
     Purpose   = "nginx server"
     Name      = "nginx-2"
   }
-    key_name  = "galsekey"
-    user_data = "${file("userdata.sh")}"
+key_name  = "galsekey"
+user_data = "${file("userdata.sh")}"
 
 }
 
