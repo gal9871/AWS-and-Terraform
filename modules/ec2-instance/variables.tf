@@ -38,6 +38,6 @@ variable "availability_zone" {
 }
 
 variable "iam_instance_profile" {
-  type = string
+  type    = string
   default = ""
 }

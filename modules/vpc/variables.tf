@@ -11,7 +11,7 @@ variable "instance_tenancy" {
   default = "default"
 }
 
-variable "enable_dns_hostnames"{
-  type = bool
+variable "enable_dns_hostnames" {
+  type    = bool
   default = true
 }

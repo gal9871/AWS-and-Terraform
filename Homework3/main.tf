@@ -182,7 +182,7 @@ module "nginx-instance-1" {
     Name      = "nginx-1"
   }
   key_name  = "galsekey"
-	user_data = "${file("userdata.sh")}"
+  user_data = file("userdata.sh")
 }
 
 module "nginx-instance-2" {
@@ -200,8 +200,8 @@ module "nginx-instance-2" {
     Purpose   = "nginx server"
     Name      = "nginx-2"
   }
-key_name  = "galsekey"
-user_data = "${file("userdata.sh")}"
+  key_name  = "galsekey"
+  user_data = file("userdata.sh")
 
 }
 
@@ -306,37 +306,37 @@ module "nginx_role" {
     ]
   })
   managed_policy_arns = [module.S3-put-access.policy-arn]
-  tags                = {
+  tags = {
     Purpose = "role for nginx instance to access S3"
   }
 }
 
 module "S3-put-access" {
-  source = "..\\modules\\iam-policy"
+  source      = "..\\modules\\iam-policy"
   name        = "s3-policy"
   description = "S3 put access policy"
-  policy      = jsonencode({
-  "Version":"2012-10-17"
-  "Statement":[
-    {
-      "Sid":"S3"
-      "Effect":"Allow"
-      "Action":["s3:*"]
-      "Resource":"*"
-    },
-  ]
-})
+  policy = jsonencode({
+    "Version" : "2012-10-17"
+    "Statement" : [
+      {
+        "Sid" : "S3"
+        "Effect" : "Allow"
+        "Action" : ["s3:*"]
+        "Resource" : "*"
+      },
+    ]
+  })
 }
 
 module "nginx_instance_profile" {
   source = "..\\modules\\iam-instance-profile"
-  name = "nginx-profile"
-  role = module.nginx_role.role-name
+  name   = "nginx-profile"
+  role   = module.nginx_role.role-name
 }
 
-module "ansible_sg"{
+module "ansible_sg" {
   source = "..\\..\\configuration-management\\materials\\terraform"
- # source = "github.com/gal9871/configuration-management.git//materials/terraform?ref=d30233c954e518048c3c2c0ccc36a50127f6b82f"
-  vpc_id        = module.main_vpc.aws_vpc_id
-  subnet_id     = module.public_subnet_1.aws_subnet_id
+  # source = "github.com/gal9871/configuration-management.git//materials/terraform?ref=d30233c954e518048c3c2c0ccc36a50127f6b82f"
+  vpc_id    = module.main_vpc.aws_vpc_id
+  subnet_id = module.public_subnet_1.aws_subnet_id
 }
