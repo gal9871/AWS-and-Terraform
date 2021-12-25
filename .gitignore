@@ -1,2 +1,4 @@
 *.terraform*
 *.pem*
+*id_rsa*
+*known_hosts*
