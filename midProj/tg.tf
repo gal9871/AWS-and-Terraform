@@ -14,16 +14,16 @@ module "listener-lb" {
   target_group_arn  = module.nginx-tg.tg-arn
 }
 
-module "lb-tg-attachment-nginx-1" {
-  source           = "..\\modules\\lb-tg-attachment"
-  target_group_arn = module.nginx-tg.tg-arn
-  target_id        = join("\",\"", module.nginx-instance-1[0].ec2_instance_id)
-  port             = 80
-}
+# module "lb-tg-attachment-nginx-1" {
+#   source           = "..\\modules\\lb-tg-attachment"
+#   target_group_arn = module.nginx-tg.tg-arn
+#   target_id        = join("\",\"", module.nginx-instance-1[0].ec2_instance_id)
+#   port             = 80
+# }
 
-module "lb-tg-attachment-nginx-2" {
-  source           = "..\\modules\\lb-tg-attachment"
-  target_group_arn = module.nginx-tg.tg-arn
-  target_id        = join("\",\"", module.nginx-instance-2[0].ec2_instance_id)
-  port             = 80
-}
+# module "lb-tg-attachment-nginx-2" {
+#   source           = "..\\modules\\lb-tg-attachment"
+#   target_group_arn = module.nginx-tg.tg-arn
+#   target_id        = join("\",\"", module.nginx-instance-2[0].ec2_instance_id)
+#   port             = 80
+# }
