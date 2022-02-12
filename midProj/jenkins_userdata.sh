@@ -1,10 +1,11 @@
 #!/bin/bash
-sudo yum update -y
-sudo yum install docker git java-1.8.0 -y
-sudo service docker start
-sudo usermod -aG docker ec2-user
-sudo yum -y install java-1.8.0-openjdk git
+# sudo yum update -y
+# sudo yum install docker git java-1.8.0 -y
+# sudo service docker start
+# sudo usermod -aG docker ec2-user
+# sudo yum -y install java-1.8.0-openjdk git
 
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 
 #Install consul agent
 #!/usr/bin/env bash
@@ -16,34 +17,34 @@ CONSUL_VERSION="1.8.5"
 echo "Grabbing IPs..."
 PRIVATE_IP=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
 
-echo "Installing dependencies..."
-apt-get -qq update &>/dev/null
-apt-get -yqq install unzip dnsmasq &>/dev/null
+# echo "Installing dependencies..."
+# apt-get -qq update &>/dev/null
+# apt-get -yqq install unzip dnsmasq &>/dev/null
 
-echo "Configuring dnsmasq..."
-cat << EODMCF >/etc/dnsmasq.d/10-consul
-# Enable forward lookup of the 'consul' domain:
-server=/consul/127.0.0.1#8600
-EODMCF
+# echo "Configuring dnsmasq..."
+# cat << EODMCF >/etc/dnsmasq.d/10-consul
+# # Enable forward lookup of the 'consul' domain:
+# server=/consul/127.0.0.1#8600
+# EODMCF
 
-systemctl restart dnsmasq
+# systemctl restart dnsmasq
 
-cat << EOF >/etc/systemd/resolved.conf
-[Resolve]
-DNS=127.0.0.1
-Domains=~consul
-EOF
+# cat << EOF >/etc/systemd/resolved.conf
+# [Resolve]
+# DNS=127.0.0.1
+# Domains=~consul
+# EOF
 
 systemctl restart systemd-resolved.service
 
-echo "Fetching Consul..."
-cd /tmp
-curl -sLo consul.zip https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
+# echo "Fetching Consul..."
+# cd /tmp
+# curl -sLo consul.zip https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
 
-echo "Installing Consul..."
-unzip consul.zip >/dev/null
-chmod +x consul
-mv consul /usr/local/bin/consul
+# echo "Installing Consul..."
+# unzip consul.zip >/dev/null
+# chmod +x consul
+# mv consul /usr/local/bin/consul
 
 # Setup Consul
 mkdir -p /opt/consul
@@ -65,7 +66,6 @@ tee /etc/consul.d/config.json > /dev/null <<EOF
 EOF
 
 # Create user & grant ownership of folders
-useradd consul
 chown -R consul:consul /opt/consul /etc/consul.d /run/consul
 
 
@@ -94,22 +94,18 @@ EOF
 systemctl daemon-reload
 systemctl enable consul.service
 systemctl start consul.service
-
-apt install -y apache2
-
-systemctl start apache2
-
-cat > webserver.json << EOF
+sleep 7s
+cat > jenkins.json << EOF
 {
-  "name": "webserver",
+  "name": "jenkins",
   "tags": [
     "primary"
   ],
-  "port": 80,
+  "port": 8080,
   "checks": [
     {
-  "name": "tcp-80",
-  "tcp": "localhost:80",
+  "name": "tcp-8080",
+  "tcp": "localhost:8080",
       "interval": "5s",
       "timeout": "20s"
     }
@@ -117,6 +113,8 @@ cat > webserver.json << EOF
 }
 EOF
 
-#curl -X PUT -d @webserver.json http://localhost:8500/v1/agent/service/register ;echo
+curl -X PUT -d @jenkins.json http://localhost:8500/v1/agent/service/register ;echo
+
+
 
 exit 0
