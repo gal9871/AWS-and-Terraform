@@ -28,7 +28,7 @@ module "private_subnet_1" {
   availability_zone       = "us-east-1a"
   vpc_id                  = module.main_vpc.aws_vpc_id
   cidr_block              = cidrsubnet(var.network_info, 8, 10) #10.0.10.0/24
-  tags = { Name = "private-subnet-2",
+  tags = { Name = "private-subnet-1",
     Environment = "prod",
   Purpuse = "private subnet for web app" }
 }
