@@ -15,10 +15,10 @@ module "listener-lb" {
 }
 
 module "lb-tg-attachment-consul" {
-  source = "..\\modules\\lb-tg-attachment"
-  count  = length(module.consul.consul_server_instance_id)
+  source           = "..\\modules\\lb-tg-attachment"
+  count            = length(module.promcol.consul_server_instance_id)
   target_group_arn = module.consul-tg.tg-arn
-  target_id  = module.consul.consul_server_instance_id[count.index]
-  port       = 8500
-  depends_on = [module.consul]
+  target_id        = module.promcol.consul_server_instance_id[count.index]
+  port             = 8500
+  depends_on       = [module.promcol]
 }
