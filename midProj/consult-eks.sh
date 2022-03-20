@@ -10,5 +10,5 @@ sed -i -e "s/${CONSULIP}/CONSULIP/g" configmap.yaml
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 helm install promcolk8s prometheus-community/kube-prometheus-stack
-
+kubectl apply -f filebeat.yaml
 #cd /var/lib/cloud/instance/scripts/

@@ -86,6 +86,14 @@ resource "aws_security_group" "opsschool_consul" {
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow ssh from the world"
   }
+
+    ingress {
+    from_port   = 9200
+    to_port     = 9200
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow 9200 from the world"
+  }
   
   ingress {
     from_port   = 21000
