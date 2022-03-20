@@ -100,3 +100,11 @@ output "servers" {
 output "clients" {
   value = [aws_instance.consul_client.*.public_ip]
 }
+
+output "servers_prv" {
+  value = aws_instance.consul_server.*.private_ip
+}
+
+output "clients_prv" {
+  value = aws_instance.consul_client.*.private_ip
+}

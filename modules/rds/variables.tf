@@ -35,5 +35,9 @@ variable "subnet_frontend"{
 }
 
 variable "subnet_backend"{
+
+}
+
+variable "vpc_id"{
   
 }

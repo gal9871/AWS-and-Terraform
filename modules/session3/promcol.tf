@@ -53,3 +53,6 @@ output "promcol" {
   value = [aws_instance.promcol.public_ip]
 }
 
+output "promcol_prv_ip" {
+  value = [aws_instance.promcol.private_ip]
+}

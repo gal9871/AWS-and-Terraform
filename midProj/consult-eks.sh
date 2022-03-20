@@ -7,3 +7,8 @@ CONSULIP=$(kubectl get svc consul-consul-dns | tail -1 |awk '{ print $3 }')
 sed -i -e "s/CONSULIP/${CONSULIP}/g" configmap.yaml
 kubectl apply -f configmap.yaml && \
 sed -i -e "s/${CONSULIP}/CONSULIP/g" configmap.yaml
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install promcolk8s prometheus-community/kube-prometheus-stack
+
+#cd /var/lib/cloud/instance/scripts/
