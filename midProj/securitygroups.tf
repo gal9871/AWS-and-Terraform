@@ -29,6 +29,36 @@ module "sg-rule-in-2" {
   security_group_id = module.nginx-sg.aws_security_group_id
 }
 
+module "sg-rule-in-3" {
+  source            = "..\\modules\\security-group-rule"
+  type              = "ingress"
+  from_port         = 3000
+  to_port           = 3000
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = module.nginx-sg.aws_security_group_id
+}
+
+module "sg-rule-in-4" {
+  source            = "..\\modules\\security-group-rule"
+  type              = "ingress"
+  from_port         = 9090
+  to_port           = 9090
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = module.nginx-sg.aws_security_group_id
+}
+
+module "sg-rule-in-5" {
+  source            = "..\\modules\\security-group-rule"
+  type              = "ingress"
+  from_port         = 5601
+  to_port           = 5601
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = module.nginx-sg.aws_security_group_id
+}
+
 module "sg-rule-out" {
   source            = "..\\modules\\security-group-rule"
   type              = "egress"

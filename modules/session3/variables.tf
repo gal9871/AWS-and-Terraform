@@ -66,3 +66,8 @@ variable "subnet_id" {
 variable "public_subnet" {
   type = string
 }
+
+
+variable "private_subnet" {
+  type = string
+}

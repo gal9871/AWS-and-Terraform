@@ -13,3 +13,7 @@ output "consul_sg" {
 output "consul_role" {
   value = aws_iam_instance_profile.consul-join.name
 }
+
+output "prometheus_server_id" {
+  value = aws_instance.promcol.id
+}

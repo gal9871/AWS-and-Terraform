@@ -38,7 +38,7 @@ resource "aws_instance" "promcol" {
   ami           = lookup(var.ami, var.region)
   instance_type = "t2.micro"
   key_name      = var.key_name
-  subnet_id = var.public_subnet
+  subnet_id = var.private_subnet
   iam_instance_profile   = aws_iam_instance_profile.consul-join.name
   vpc_security_group_ids = [aws_security_group.opsschool_consul.id]
 

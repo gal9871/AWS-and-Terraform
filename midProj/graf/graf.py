@@ -13,8 +13,8 @@ for filename in os.listdir(directory):
         headers = CaseInsensitiveDict()
         headers["Accept"] = "application/json"
         headers["Content-Type"] = "application/json"
-        headers["Authorization"] = "Bearer eyJrIjoiY3NRbXZrU0w0MnNjbnBVYzFlbVNSUjBWcXlpdnVrYVQiLCJuIjoiZ3JhZiIsImlkIjoxfQ=="
-        url = 'http://3.221.155.91:3000/api/dashboards/db'
+        headers["Authorization"] = "Bearer eyJrIjoiczFKV05aeUwwWXV0NTkwN2RNS0Mxb3duN1lBYzZQbHQiLCJuIjoiamoiLCJpZCI6MX0="
+        url = 'http://app-lb-1241628419.us-east-1.elb.amazonaws.com:3000/api/dashboards/db'
         x = requests.post(url, json = data, headers = headers)
 
         print(x.text)
