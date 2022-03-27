@@ -1,20 +1,15 @@
 #!/usr/bin/env bash
 
-chmod +x /home/ubuntu/sh.sh
-./sh.sh
+# chmod +x /home/ubuntu/sh.sh
+# ./sh.sh
 
-# #!/usr/bin/env bash
-# set -e
+#install trivy
+sudo apt-get install wget apt-transport-https gnupg lsb-release
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+sudo apt-get update
+sudo apt-get install trivy
 
-# ### set consul version
-# CONSUL_VERSION="1.8.5"
-
-# echo "Grabbing IPs..."
-# PRIVATE_IP=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
-
-# echo "Installing dependencies..."
-# apt-get -qq update &>/dev/null
-# apt-get -yqq install unzip dnsmasq &>/dev/null
 
 apt-get update
 apt-get install -y awscli

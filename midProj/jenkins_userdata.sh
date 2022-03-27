@@ -117,4 +117,77 @@ curl -X PUT -d @jenkins.json http://localhost:8500/v1/agent/service/register ;ec
 
 
 
+
+### Install Node Exporter
+wget https://github.com/prometheus/node_exporter/releases/download/v${node_exporter_version}/node_exporter-${node_exporter_version}.linux-amd64.tar.gz -O /tmp/node_exporter.tgz
+mkdir -p ${prometheus_dir}
+tar zxf /tmp/node_exporter.tgz -C ${prometheus_dir}
+
+# Configure node exporter service
+tee /etc/systemd/system/node_exporter.service > /dev/null <<EOF
+[Unit]
+Description=Prometheus node exporter
+Requires=network-online.target
+After=network.target
+
+[Service]
+ExecStart=${prometheus_dir}/node_exporter-${node_exporter_version}.linux-amd64/node_exporter
+KillSignal=SIGINT
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable node_exporter.service
+systemctl start node_exporter.service
+
+# filebeat
+wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.11.0-amd64.deb
+dpkg -i filebeat-*.deb
+
+
+sudo mv /etc/filebeat/filebeat.yml /etc/filebeat/filebeat.yml.BCK
+
+cat <<\EOF > /etc/filebeat/filebeat.yml
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/auth.log
+
+filebeat.modules:
+  - module: system
+    syslog:
+      enabled: false
+    auth:
+      enabled: false
+
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+setup.dashboards.enabled: false
+
+setup.template.name: "filebeat"
+setup.template.pattern: "filebeat-*"
+setup.template.settings:
+  index.number_of_shards: 1
+
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+
+output.elasticsearch:
+  hosts: [ "localhost:9200" ]
+  index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+## OR
+#output.logstash:
+#  hosts: [ "127.0.0.1:5044" ]
+EOF
+
+echo "INFO: userdata finished"
+
 exit 0
