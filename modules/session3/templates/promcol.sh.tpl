@@ -52,6 +52,19 @@ scrape_configs:
          target_label: 'tags'
        - source_labels: ['__meta_consul_service']
          target_label: 'service'
+  - job_name: 'kandula-app'
+    metrics_path: '/metrics'
+    consul_sd_configs:
+      - server: 'localhost:8500'
+        services: 
+          - kandula-service-default
+    relabel_configs:
+      - source_labels: ['__address__']
+        target_label: '__address__'
+        regex: '(.*):(.*)'
+        replacement: ':9100'
+      - source_labels: ['__meta_consul_service_id']
+        target_label: 'pod'
 EOF
 
 # Configure promcol service
@@ -96,12 +109,31 @@ tee /etc/consul.d/promcol-9090.json > /dev/null <<"EOF"
 }
 EOF
 
+
 consul reload
 
-sudo apt-get install -y adduser libfontconfig1
+apt-get install -y adduser libfontconfig1
 wget https://dl.grafana.com/enterprise/release/grafana-enterprise_8.4.3_amd64.deb
-sudo dpkg -i grafana-enterprise_8.4.3_amd64.deb
-sudo systemctl daemon-reload
-sudo systemctl enable grafana-server
-sudo systemctl start grafana-server
+dpkg -i grafana-enterprise_8.4.3_amd64.deb
+systemctl daemon-reload
+
+tee /etc/grafana/provisioning/datasources/prometheus.yaml > /dev/null <<EOF
+apiVersion: 1
+
+datasources:
+  - name: Prometheus-EC2
+    type: prometheus
+    access: server
+    url: http://promcol.service.consul:9090
+    isDefault: true
+  - name: Prometheus-K8s
+    type: prometheus
+    access: proxy
+    url: http://prometheus-operated-default.service.consul:9090
+    isDefault: false
+EOF
+
+systemctl restart grafana-server.service
+systemctl enable grafana-server
+systemctl start grafana-server
 
