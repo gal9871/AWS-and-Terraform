@@ -45,7 +45,7 @@ scrape_configs:
        - source_labels: ['__address__']
          target_label: '__address__'
          regex: '(.*):(.*)'
-         replacement: ':9100'
+         replacement: '$1:9100'
        - source_labels: ['__meta_consul_node']
          target_label: 'instance'
        - source_labels: ['__meta_consul_tags']
@@ -62,7 +62,7 @@ scrape_configs:
       - source_labels: ['__address__']
         target_label: '__address__'
         regex: '(.*):(.*)'
-        replacement: ':9100'
+        replacement: '$1:9100'
       - source_labels: ['__meta_consul_service_id']
         target_label: 'pod'
 EOF
