@@ -1,4 +1,4 @@
-OpsSchool Mid-Project - by Gal Segal
+OpsSchool Final-Project - by Gal Segal
 
 https://docs.google.com/presentation/d/1mMGt79E7gFhoXVnV48EtzSQIr9tWnLsGfvwVGZ8vpAI/edit?usp=sharing
 
@@ -8,6 +8,7 @@ Infrastructure is deployed using Terraform on AWS:
 - 1 main VPC
 - 2 Private Subnets
 - 2 Public Subnets
+- DB
 - backend state is handled on S3 bucket
 - "Application" Load balancer targeting & exposing instances:
 - 3 Consul Servers
@@ -15,6 +16,11 @@ Infrastructure is deployed using Terraform on AWS:
 - 2 groups / 2 nodes each.
 - deployments of the Kandula web-app, running on ELB LoadBalancer - using Flask listening on port 5000.
 - Jenkins server and 2 agents.
+- ELK Cluster for logging
+- Node exporters on each service
+- Grafana for metrics
+- JMeter for Load Tests
+- 
 
 **Pre-Requisites**
 
@@ -27,16 +33,19 @@ Infrastructure is deployed using Terraform on AWS:
 **Installation & Usage**
 
 1. git clone https://github.com/gal9871/AWS-and-Terraform
-2. cd midProj/
+2. cd finalProj/
 4. terraform init
-5. terraform apply --auto-approve
+5. ./consult-eks.sh
 
 Access Jenkins Master: jenkins_server public-ip:8080
 Access Consul ui: Load Balancer app-lb DNS hostname (will redirect to /ui)
 
 In order to connect Jenkins server to agents -
 On Agents -> SSH -> sudo su -> ./sh.sh
-On Server -> Configure Jenkins -> Manage Nodes -> Add Node -> Add all the relevant information.
+On Server -> Configure Jenkins ->Edit node -> Add the private IP of the node
+
+** Deploy Kandula **
+Run the 'deploy-docker' pipeline with deploy 'enabled'.
 
 **Jenkins**
 
